@@ -86,9 +86,18 @@ SELECT source.name, sum(sale.sale_sum) FROM source
 SELECT good.name FROM good
 	INNER JOIN category_has_good ON good.id = category_has_good.good_id
     INNER JOIN category ON category.id = category_has_good.category_id WHERE category.name = "Cakes"
-    INNER JOIN category ON category.id = category_has_good.category_id WHERE category.name = "Cakes"
 UNION
 SELECT good.name FROM good
 	INNER JOIN sale_has_good ON good.id = sale_has_good.good_id
     INNER JOIN sale ON sale.id = sale_has_good.sale_id
     INNER JOIN status ON status.id = sale.status_id WHERE status.name = "delivering";
+    
+-- Выведите список всех категорий продуктов и количество продаж товаров, относящихся к данной категории.
+-- Под количеством продаж товаров подразумевается суммарное количество единиц товара данной категории,
+-- фигурирующих в заказах с любым статусом.
+SELECT category.name, count(sale.id) FROM category
+	LEFT OUTER JOIN category_has_good ON category.id = category_has_good.category_id
+    LEFT OUTER JOIN good ON good.id = category_has_good.good_id
+    LEFT OUTER JOIN sale_has_good ON good.id = sale_has_good.good_id
+    LEFT OUTER JOIN sale ON sale.id = sale_has_good.sale_id
+    GROUP BY category.name;
